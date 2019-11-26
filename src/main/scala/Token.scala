@@ -13,8 +13,8 @@ object TokenType extends Enumeration {
     def regex: Regex = regexRaw.r
   }
 
-  val AttlistToken = Val("""(!ATTLIST)""")
-  val ElementToken = Val("""(!ELEMENT)""")
+  val AttlistToken = Val("""(<!ATTLIST)""")
+  val ElementToken = Val("""(<!ELEMENT)""")
 
   val PcdataToken = Val("""(\(#PCDATA\))""")
   val EmptyToken = Val("""(EMPTY)""")
