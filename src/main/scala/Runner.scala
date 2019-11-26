@@ -1,5 +1,7 @@
 object Runner {
   def main(args: Array[String]): Unit = {
-    println("Hello, world!")
+    val tokens = Tokenizer.tokenize(ExampleInputs.example1)
+    println("----- ----- ----- ----- ----- TOKENS ----- ----- ----- ----- -----")
+    tokens.foreach(t => println(s"${t.value}${" "*(12 - t.value.size)} ${t.tokenType}"))
   }
 }
