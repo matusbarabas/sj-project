@@ -1,4 +1,5 @@
 # BNF
+```
 dtddocument ::= declaration {declaration} .
 declaration ::= attrdecl | elemdecl .
 elemdecl ::= '<!ELEMENT' name ('EMPTY' | 'ANY' | '(#PCDATA)' | elemchild) '>' .
@@ -16,6 +17,7 @@ number::= digit {digit} .
 digit::= '0' | .. | '9' .
 word ::= char {char} .
 char::= letter | digit | $ | % | ~
+```
 
 # Grammar
 ```
