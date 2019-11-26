@@ -1,11 +1,12 @@
 import scala.util.matching.Regex
 
-case class Token (
+case class Token(
   value: String,
   tokenType: TokenType.Val
 )
 
 object TokenType extends Enumeration {
+
   case class Val(
     regexRaw: String,
     chars: Seq[Char] = Seq.empty[Char]
@@ -33,10 +34,10 @@ object TokenType extends Enumeration {
   val NonReservedWord = Val("") // Represents both Word and Name
 
   val Quotes = Val("""^[\"]$""", Seq('\"'))
-  val Delimiters = Val("""^[,|]$""", Seq(',','|'))
-  val Optional = Val("""^[\?\*\+]$""", Seq('?','*','+'))
-  val PointyBrackets = Val("""^[\<\>]$""", Seq('<','>'))
-  val CurlyBrackets = Val("""^[\(\)]$""", Seq('(',')'))
+  val Delimiters = Val("""^[,|]$""", Seq(',', '|'))
+  val Optional = Val("""^[\?\*\+]$""", Seq('?', '*', '+'))
+  val PointyBrackets = Val("""^[\<\>]$""", Seq('<', '>'))
+  val CurlyBrackets = Val("""^[\(\)]$""", Seq('(', ')'))
 
   val Unknown = Val(".")
 

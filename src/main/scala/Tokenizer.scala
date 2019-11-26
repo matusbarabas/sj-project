@@ -15,17 +15,17 @@ object Tokenizer {
   }
 
   def checkReserved(depth: Int)(word: String): Seq[Token] = {
-    println(s"${" "*depth*4}Checking reserved")
+    println(s"${" " * depth * 4}Checking reserved")
     checkGeneric(word, TokenType.reservedWords)
   }
 
   def checkNonReserved(depth: Int)(word: String): Seq[Token] = {
-    println(s"${" "*depth*4}Checking nonreserved")
+    println(s"${" " * depth * 4}Checking nonreserved")
     checkGeneric(word, TokenType.nonReservedWords, Option(TokenType.NonReservedWord))
   }
 
   def checkSpecial(depth: Int)(word: String): Seq[Token] = {
-    println(s"${" "*depth*4}Checking special")
+    println(s"${" " * depth * 4}Checking special")
     val dbg = checkGeneric(word, TokenType.specialWords)
     dbg
   }
@@ -61,9 +61,10 @@ object Tokenizer {
     }
   }
 
+  @scala.annotation.tailrec
   def chainExecution(word: String, depth: Int)(functions: Seq[String => Seq[Token]]): Seq[Token] = {
     functions match {
-      case exec::tail =>
+      case exec :: tail =>
         val result = exec(word)
         if (result.nonEmpty) {
           result
@@ -79,9 +80,18 @@ object Tokenizer {
     val words = string.replaceAll("\\s", " ").split(" +").toSeq.filter(_.trim().nonEmpty)
 
     words.flatMap { word =>
-      println(s"${" "*depth*4}Tokenizing word: $word")
-      val tokens = chainExecution(word, depth)(Seq(checkReserved(depth), checkNonReserved(depth), checkSpecial(depth), checkComplex(depth)))
-      tokens.foreach(token => println(s"""${" "*depth*4}Created token "${token.value}" of type "${token.tokenType}""""))
+      println(s"${" " * depth * 4}Tokenizing word: $word")
+      val tokens = chainExecution(word, depth)(
+        Seq(
+          checkReserved(depth),
+          checkNonReserved(depth),
+          checkSpecial(depth),
+          checkComplex(depth)
+        )
+      )
+      tokens.foreach(token =>
+        println(s"""${" " * depth * 4}Created token "${token.value}" of type "${token.tokenType}"""")
+      )
       println()
       tokens
     }
