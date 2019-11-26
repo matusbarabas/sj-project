@@ -10,7 +10,7 @@ object TokenType extends Enumeration {
     regexRaw: String,
     chars: Seq[Char] = Seq.empty[Char]
   ) extends super.Val {
-    def regex: Regex =  regexRaw.r
+    def regex: Regex = regexRaw.r
   }
 
   val AttlistToken = Val("""(!ATTLIST)""")
@@ -33,7 +33,7 @@ object TokenType extends Enumeration {
   val NonReservedWord = Val("") // Represents both Word and Name
 
   val Quotes = Val("""^[\"]$""", Seq('\"'))
-  val Delimiters = Val("""^[,]$""", Seq(',','|'))
+  val Delimiters = Val("""^[,|]$""", Seq(',','|'))
   val Optional = Val("""^[\?\*\+]$""", Seq('?','*','+'))
   val PointyBrackets = Val("""^[\<\>]$""", Seq('<','>'))
   val CurlyBrackets = Val("""^[\(\)]$""", Seq('(',')'))
