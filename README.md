@@ -1,3 +1,22 @@
+# BNF
+dtddocument ::= declaration {declaration} .
+declaration ::= attrdecl | elemdecl .
+elemdecl ::= '<!ELEMENT' name ('EMPTY' | 'ANY' | '(#PCDATA)' | elemchild) '>' .
+elemchild ::= '('(choice | seq)['?' | '*' | '+'] ')' .
+choice ::= '(' cp ['|' cp] ')' .
+seq ::= '(' cp {',' cp} ')' .
+cp ::= (name | choice | seq) ['?' | '*' | '+'].
+attrdecl ::= '<!ATTLIST' name { '|' name attrtype defaultdecl} '>' .
+attrtype::= 'CDATA' | 'NMTOKEN' | 'IDREF' | '(' word ['|' word] ')' .
+defaultdecl ::= '#REQUIRED' | '#IMPLIED' | (['#FIXED'] '"' word { '|' word} '"' ) .
+name ::= (letter| '_' | ':') {namechar} .
+namechar ::= letter| digit| '.' | '-' | '_' | ':' .
+letter::= 'A' | .. | 'Z' | 'a' | .. | 'z' .
+number::= digit {digit} .
+digit::= '0' | .. | '9' .
+word ::= char {char} .
+char::= letter | digit | $ | % | ~
+
 # Grammar
 ```
 DTDOC -> DEC DTDOC'
