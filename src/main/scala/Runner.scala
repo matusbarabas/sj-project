@@ -1,7 +1,14 @@
 object Runner {
+
   def main(args: Array[String]): Unit = {
-    val tokens = Tokenizer.tokenize(ExampleInputs.example1)
+    var tokens = Tokenizer.tokenize(ExampleInputs.example2)
+    tokens = tokens :+ Token("$", TokenType.EndOfFile)
     println("----- ----- ----- ----- ----- TOKENS ----- ----- ----- ----- -----")
-    tokens.foreach(t => println(s"${t.value}${" " * (12 - t.value.length)} ${t.tokenType}"))
+    tokens.foreach(t =>
+      println(s"${t.value}${" " * (12 - t.value.length)} ${t.tokenType}")
+    )
+    val parsingTable = SyntaxAnalysis.initializeAndLoadParseTable()
+    SyntaxAnalysis.analyzeSyntax(tokens, parsingTable)
   }
+
 }

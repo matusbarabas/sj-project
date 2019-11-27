@@ -7,4 +7,6 @@ object ExampleInputs {
       |<!ELEMENT heading (#PCDATA)>
       |<!ELEMENT body (#PCDATA)>
     """.stripMargin
+
+  val example2: String = "<!ELEMENT to (#PCDATA)>"
 }

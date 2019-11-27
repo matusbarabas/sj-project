@@ -41,6 +41,8 @@ object TokenType extends Enumeration {
 
   val Unknown = Val(".")
 
+  val EndOfFile = Val("$")
+
   val reservedWords = Seq(AttlistToken, ElementToken, PcdataToken, EmptyToken, AnyToken, CdataToken, NmtokenToken, IdrefToken, RequiredToken, ImpliedToken, FixedToken)
   val nonReservedWords = Seq(Word, Name)
   val specialWords = Seq(Quotes, Delimiters, Optional, PointyBrackets, CurlyBrackets)
