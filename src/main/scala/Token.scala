@@ -1,44 +1,45 @@
 import scala.util.matching.Regex
 
 case class Token(
-  value: String,
-  tokenType: TokenType.Val
-)
+                  value: String,
+                  tokenType: TokenType.Val
+                )
 
 object TokenType extends Enumeration {
 
   case class Val(
-    regexRaw: String,
-    chars: Seq[Char] = Seq.empty[Char]
-  ) extends super.Val {
+                  regexRaw: String,
+                  keyword: Option[String] = None,
+                  chars: Seq[Char] = Seq.empty[Char]
+                ) extends super.Val {
     def regex: Regex = regexRaw.r
   }
 
-  val AttlistToken = Val("""(<!ATTLIST)""")
-  val ElementToken = Val("""(<!ELEMENT)""")
+  val AttlistToken = Val("""(<!ATTLIST)""", Some("<!ATTLIST"))
+  val ElementToken = Val("""(<!ELEMENT)""", Some("<!ELEMENT"))
 
-  val PcdataToken = Val("""(\(#PCDATA\))""")
-  val EmptyToken = Val("""(EMPTY)""")
-  val AnyToken = Val("""(ANY)""")
+  val PcdataToken = Val("""(\(#PCDATA\))""", Some("(#PCDATA)"))
+  val EmptyToken = Val("""(EMPTY)""", Some("EMPTY"))
+  val AnyToken = Val("""(ANY)""", Some("ANY"))
 
-  val CdataToken = Val("""(CDATA)""")
-  val NmtokenToken = Val("""(NMTOKEN)""")
-  val IdrefToken = Val("""(IDREF)""")
+  val CdataToken = Val("""(CDATA)""", Some("CDATA"))
+  val NmtokenToken = Val("""(NMTOKEN)""", Some("NMTOKEN"))
+  val IdrefToken = Val("""(IDREF)""", Some("IDREF"))
 
-  val RequiredToken = Val("""(#REQUIRED)""")
-  val ImpliedToken = Val("""(#IMPLIED)""")
-  val FixedToken = Val("""(#FIXED)""")
+  val RequiredToken = Val("""(#REQUIRED)""", Some("#REQUIRED"))
+  val ImpliedToken = Val("""(#IMPLIED)""", Some("#IMPLIED"))
+  val FixedToken = Val("""(#FIXED)""", Some("#FIXED"))
 
   val Word = Val("""^[A-Za-z0-9\$\~\%]*$""")
   val Name = Val("""^([A-Za-z\_\:])[A-Za-z0-9\-\_\:]*$""")
   val NonReservedWord = Val("") // Represents both Word and Name
   val NonReservedWordChar = Val("")
 
-  val Quotes = Val("""^[\"]$""", Seq('\"'))
-  val Delimiters = Val("""^[,|]$""", Seq(',', '|'))
-  val Optional = Val("""^[\?\*\+]$""", Seq('?', '*', '+'))
-  val PointyBrackets = Val("""^[\>]$""", Seq('>'))
-  val CurlyBrackets = Val("""^[\(\)]$""", Seq('(', ')'))
+  val Quotes = Val("""^[\"]$""", chars = Seq('\"'))
+  val Delimiters = Val("""^[,|]$""", chars = Seq(',', '|'))
+  val Optional = Val("""^[\?\*\+]$""", chars = Seq('?', '*', '+'))
+  val PointyBrackets = Val("""^[\>]$""", chars = Seq('>'))
+  val CurlyBrackets = Val("""^[\(\)]$""", chars = Seq('(', ')'))
 
   val Unknown = Val(".")
 
