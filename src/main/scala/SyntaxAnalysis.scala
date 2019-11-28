@@ -1,5 +1,5 @@
 import scala.io.Source
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.Stack
 
 object SyntaxAnalysis {
 
@@ -27,38 +27,41 @@ object SyntaxAnalysis {
     var pos = 0
     val nonReservedWordPos = 0
 
-    var stack: ListBuffer[String] = ListBuffer()
-    stack += "$"
-    stack += "DTDOC'"
-    stack += "DEC"
+    val stack = Stack[String]()
+    stack.push("$")
+    stack.push("DTDOC")
 
     var token = tokens(pos)
 
-    while (stack.last != "$") {
+    while (stack.top != "$") {
       printStack(stack)
       token = tokens(pos)
 
       println("Token value: " + token.value + " type: " + token.tokenType)
-      println("Top of stack value: " + stack.last)
+      println("Top of stack value: " + stack.top)
 
-      if (!parsingTable.keys.toList.contains(stack.last) | stack.last == "$") {
-        if (token.value == stack.last) {
-          println("POP - The top of the stack is the same as token.")
-          stack = stack.dropRight(1)
-          pos += 1
+      if (token.tokenType != TokenType.NonReservedWord) {
+        if (!parsingTable.keys.toList.contains(stack.top) | stack.top == "$") {
+          if (token.value == stack.top) {
+            println("POP - The top of the stack is the same as token.")
+            stack.pop()
+            pos += 1
+          } else {
+            println("ERROR - No match in parsing table.")
+          }
         } else {
-          println("ERROR - No match in parsing table.")
+          val rule = getRule(stack.top, token.value, parsingTable)
+          if (rule != "error") {
+            println("MATCH - Applying rules: " + stack.top + " -> " + rule)
+            val rules = rule.split("\u00A0").toList
+            stack.pop()
+            rules.reverse.foreach(stack.push)
+          } else {
+            println("ERROR - No match in parsing table.")
+          }
         }
       } else {
-        val rule = getRule(stack.last, token.value, parsingTable)
-        if (rule != "error") {
-          println("MATCH - Applying rules: " + stack.last + " -> " + rule)
-          val rules = rule.split("\u00A0").toList
-          stack = stack.dropRight(1)
-          stack ++= rules.reverse
-        } else {
-          println("ERROR - No match in parsing table.")
-        }
+
       }
     }
 
@@ -80,7 +83,7 @@ object SyntaxAnalysis {
     rules.foreach(rule => print(rule + " "))
   }
 
-  def printStack(stack: ListBuffer[String]): Unit = {
+  def printStack(stack: Stack[String]): Unit = {
     println("----- ----- ----- ----- ----- STACK ----- ----- ----- ----- -----")
     stack.reverse.foreach(println(_))
     println("----- ----- ----- ----- ----- END STACK ----- ----- ----- ----- -")
