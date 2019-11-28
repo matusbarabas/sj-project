@@ -32,6 +32,7 @@ object TokenType extends Enumeration {
   val Word = Val("""^[A-Za-z0-9\$\~\%]*$""")
   val Name = Val("""^([A-Za-z\_\:])[A-Za-z0-9\-\_\:]*$""")
   val NonReservedWord = Val("") // Represents both Word and Name
+  val NonReservedWordChar = Val("")
 
   val Quotes = Val("""^[\"]$""", Seq('\"'))
   val Delimiters = Val("""^[,|]$""", Seq(',', '|'))

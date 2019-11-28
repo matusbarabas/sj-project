@@ -21,11 +21,16 @@ object SyntaxAnalysis {
   }
 
   def analyzeSyntax(
-    tokens: Seq[Token],
+    tokensIn: Seq[Token],
     parsingTable: collection.mutable.Map[String, Map[String, String]]
   ): Unit = {
+    val tokens = tokensIn.flatMap { token =>
+      if (token.tokenType == TokenType.NonReservedWord) {
+        token.value.map(tokenChar => Token(tokenChar.toString, TokenType.NonReservedWordChar))
+      } else Seq(token)
+    }
+
     var pos = 0
-    val nonReservedWordPos = 0
 
     val stack = Stack[String]()
     stack.push("$")
@@ -40,28 +45,28 @@ object SyntaxAnalysis {
       println("Token value: " + token.value + " type: " + token.tokenType)
       println("Top of stack value: " + stack.top)
 
-      if (token.tokenType != TokenType.NonReservedWord) {
-        if (!parsingTable.keys.toList.contains(stack.top) | stack.top == "$") {
-          if (token.value == stack.top) {
-            println("POP - The top of the stack is the same as token.")
-            stack.pop()
-            pos += 1
-          } else {
-            println("ERROR - No match in parsing table.")
-          }
+      if (!parsingTable.keys.toList.contains(stack.top) | stack.top == "$") {
+        if (token.value == stack.top) {
+          println("POP - The top of the stack is the same as token.")
+          stack.pop()
+          pos += 1
         } else {
-          val rule = getRule(stack.top, token.value, parsingTable)
-          if (rule != "error") {
-            println("MATCH - Applying rules: " + stack.top + " -> " + rule)
-            val rules = rule.split("\u00A0").toList
-            stack.pop()
-            rules.reverse.foreach(stack.push)
-          } else {
-            println("ERROR - No match in parsing table.")
-          }
+          println("ERROR - No match in parsing table.")
         }
       } else {
-
+        val rule = getRule(stack.top, token.value, parsingTable)
+        if (rule == "error") {
+          println("ERROR - No match in parsing table.")
+        } else if (rule == "ε") {
+          println("MATCH - Applying rules: " + stack.top + " -> " + rule)
+          stack.pop()
+          println("POP - Rule is epsilon.")
+        } else {
+          println("MATCH - Applying rules: " + stack.top + " -> " + rule)
+          val rules = rule.split("\u00A0").toList
+          stack.pop()
+          rules.reverse.foreach(stack.push)
+        }
       }
     }
 
@@ -85,7 +90,7 @@ object SyntaxAnalysis {
 
   def printStack(stack: Stack[String]): Unit = {
     println("----- ----- ----- ----- ----- STACK ----- ----- ----- ----- -----")
-    stack.reverse.foreach(println(_))
+    stack.foreach(println(_))
     println("----- ----- ----- ----- ----- END STACK ----- ----- ----- ----- -")
   }
 }
