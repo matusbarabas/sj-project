@@ -37,7 +37,7 @@ object TokenType extends Enumeration {
   val Quotes = Val("""^[\"]$""", Seq('\"'))
   val Delimiters = Val("""^[,|]$""", Seq(',', '|'))
   val Optional = Val("""^[\?\*\+]$""", Seq('?', '*', '+'))
-  val PointyBrackets = Val("""^[\<\>]$""", Seq('<', '>'))
+  val PointyBrackets = Val("""^[\>]$""", Seq('>'))
   val CurlyBrackets = Val("""^[\(\)]$""", Seq('(', ')'))
 
   val Unknown = Val(".")

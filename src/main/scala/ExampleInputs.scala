@@ -9,4 +9,6 @@ object ExampleInputs {
     """.stripMargin
 
   val example2: String = "<!ELEMENT to (#PCDATA)>"
+
+  val example3: String = "<!ATTLST akj | fiit IDREF #REQUIRED>"
 }
