@@ -114,7 +114,10 @@ object Tokenizer {
 
   def run(string: String): Seq[Token] = {
     val tokens = tokenize(string)
-    tokens.map { token =>
+
+    var typoFound = false
+    println("Checking for typo in non reserved or unknown tokens:")
+    val fixedTokens = tokens.map { token =>
       if ((Seq(TokenType.Unknown) ++ TokenType.nonReservedWords).contains(token.tokenType)) {
         TokenType.reservedWords
           .map { tokenType =>
@@ -123,11 +126,19 @@ object Tokenizer {
           }
           .find { case (_, _, distance) => distance <= 2 }
         match {
-          case Some((tokenType, toCompare, _)) => Token(toCompare, tokenType)
+          case Some((tokenType, toCompare, distance)) =>
+            println(s"""Levenshtein distance of "${token.value}" from "$toCompare" is $distance, changing token type to $tokenType """)
+            typoFound = true
+            Token(toCompare, tokenType)
           case _ => token
         }
       } else token
     }
+    if(!typoFound) {
+      println("no typos found")
+    }
+    println()
+    fixedTokens
   }
 
 }
