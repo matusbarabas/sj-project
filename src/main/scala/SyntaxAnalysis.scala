@@ -76,8 +76,14 @@ object SyntaxAnalysis {
   }
 
   def recovery(stack: Stack[String]): Unit = {
-    if (stack.top == "|") stack.pop()
-    else sys.error("ERROR - No match in parsing table, end of execution.")
+    if (stack.top == "ELEMCHILD′′") {
+      stack.pop()
+      stack.push("ELEMCHILD′′′")
+    } else if (stack.top == "ELEMCHILD′") {
+      stack.pop()
+    } else {
+      sys.error("ERROR - No match in parsing table, end of execution.")
+    }
   }
 
   def getRule(

@@ -21,5 +21,5 @@ object ExampleInputs {
       |<!ELEMEENT body (#PCDATA)>
     """.stripMargin
 
-  val example5: String = "<!ATTLIST f IDREF #REQUIRED>"
+  val example5: String = "<!ELEMENT note ((to,from,heading,body))>"
 }
