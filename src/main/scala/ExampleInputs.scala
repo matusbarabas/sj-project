@@ -20,4 +20,6 @@ object ExampleInputs {
       |<!ELEMENT heading (#PCDATA)>
       |<!ELEMEENT body (#PCDATA)>
     """.stripMargin
+
+  val example5: String = "<!ATTLIST f IDREF #REQUIRED>"
 }

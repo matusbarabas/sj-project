@@ -52,11 +52,13 @@ object SyntaxAnalysis {
           pos += 1
         } else {
           println("ERROR - No match in parsing table.")
+          recovery(stack)
         }
       } else {
         val rule = getRule(stack.top, token.value, parsingTable)
         if (rule == "error") {
           println("ERROR - No match in parsing table.")
+          recovery(stack)
         } else if (rule == "ε") {
           println("MATCH - Applying rules: " + stack.top + " -> " + rule)
           stack.pop()
@@ -71,6 +73,11 @@ object SyntaxAnalysis {
     }
 
     println("DONE")
+  }
+
+  def recovery(stack: Stack[String]): Unit = {
+    if (stack.top == "|") stack.pop()
+    else sys.error("ERROR - No match in parsing table, end of execution.")
   }
 
   def getRule(

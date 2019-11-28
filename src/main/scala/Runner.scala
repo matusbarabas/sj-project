@@ -1,7 +1,7 @@
 object Runner {
 
   def main(args: Array[String]): Unit = {
-    var tokens = Tokenizer.run(ExampleInputs.example4)
+    var tokens = Tokenizer.run(ExampleInputs.example5)
     tokens = tokens :+ Token("$", TokenType.EndOfFile)
     println("----- ----- ----- ----- ----- TOKENS ----- ----- ----- ----- -----")
     tokens.foreach(t =>
