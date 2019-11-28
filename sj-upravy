@@ -1,0 +1,181 @@
+Odstranenie lavej faktorizacie - DTDOC
+
+DTDOC -> DEC DTDOC' .
+
+DTDOC' -> DTDOC 
+   | .
+
+DEC -> ATTRDEC
+   | ELEMDEC .
+
+Odstranenie lavej faktorizacie ELEMDEC
+
+ELEMDEC -> <!element NAME ELEMDEC' .
+
+ELEMDEC' -> empty >
+   | any >
+   | (pcdata) >
+   | ELEMCHILD > .
+
+Odstranenie dvojitej lavej faktorizacie ELEMCHILD
+
+ELEMCHILD -> ( ELEMCHILD'' .
+
+ELEMCHILD' -> ? )
+   | * )
+   | + )
+   | ) .
+
+ELEMCHILD'' -> CH ELEMCHILD'
+   | SEQ ELEMCHILD' .
+ 
+Odstranenie lavej faktorizacie CH
+
+CH -> ( CP CH' .
+CH' -> & CP )
+   | ) .
+   
+Odstranenie lavej faktorizacie SEQ'
+
+SEQ' -> CP SEQ'' .
+
+SEQ'' -> , SEQ'
+   | .
+
+Odstranenie lavej faktorizacie CP
+
+CP -> NAME CP'
+   | CH CP'
+   | SEQ CP' .
+
+CP' -> ?
+   | *
+   | +
+   | .
+
+Substitucia CH a SEQ
+ 
+ELEMCHILD'' -> ( CP CH' ELEMCHILD'
+   | ( SEQ' ) ELEMCHILD' .
+
+CP -> NAME CP'
+   | ( CP CH' CP'
+   | ( SEQ' ) CP' .
+
+Odstranenie lavej faktorizacie ELEMCHILD''
+ 
+ELEMCHILD'' -> ( ELEMCHILD''' .
+
+ELEMCHILD''' -> CP CH' ELEMCHILD'
+   | SEQ' ) ELEMCHILD' .
+
+Odstranenie lavej faktorizacie CP
+
+CP -> NAME CP'
+   | ( CP'' .
+
+CP' -> ?
+   | *
+   | +
+   | .
+
+CP'' -> CP CH' CP'
+   | SEQ' ) CP' .
+
+Substitucia SEQ'
+
+ELEMCHILD''' -> CP CH' ELEMCHILD'
+   | CP SEQ'' ) ELEMCHILD' .
+
+SEQ'' -> , CP SEQ''
+   | .
+
+CP'' -> CP CH' CP'
+   | CP SEQ'' ) CP' .
+
+Odstranenie lavej faktorizacie ELEMCHILD'''
+
+ELEMCHILD''' -> CP ELEMCHILD'''' .
+
+ELEMCHILD'''' -> CH' ELEMCHILD'
+   | SEQ'' ) ELEMCHILD' .
+
+Odstranenie lavej faktorizacie CP''
+
+CP'' -> CP CP''' .
+
+CP''' -> CH' CP'
+   | SEQ'' ) CP' .
+
+Odstranenie epsilon SEQ''
+ 
+ELEMCHILD'''' -> CH' ELEMCHILD'
+   | SEQ'' ) ELEMCHILD'
+   | ) ELEMCHILD' .
+
+SEQ'' -> , CP SEQ''
+   | , CP .
+
+CP''' -> CH' CP'
+   | SEQ'' ) CP' 
+   | ) CP'.
+
+Substitucia CH' v ELEMCHILD'''' a CP'''
+ 
+ELEMCHILD'''' -> & CP ) ELEMCHILD'
+   | SEQ'' ) ELEMCHILD'
+   | ) ELEMCHILD' .
+
+CP''' -> & CP ) CP'
+   | SEQ'' ) CP' 
+   | ) CP'.
+
+Odstranenie lavej faktorizacie SEQ''
+ 
+SEQ'' -> , CP SEQ''' .
+
+SEQ''' -> SEQ''
+   | .
+
+Odstranenie lavej faktorizacie ATTRTYPE
+ 
+ ATTRTYPE -> cdata
+   | nmtoken
+   | idref
+   | ( WORD ATTRTYPE' .
+
+ATTRTYPE' -> )
+   | & WORD ) .
+
+Odstranenie lavej faktorizacie DEFAULTDEC'
+ 
+DEFAULTDEC' -> WORD Y' .
+
+Y' -> DEFAULTDEC' 
+   | .
+
+Odstranenie lavej faktorizacie WORD
+
+WORD -> CHAR WORD' .
+
+WORD' -> WORD
+   | .
+
+CHAR -> LET
+   | DIG
+   | $
+   | ~
+   | % .
+
+Zmena - Y' - DEFAULTDEC''
+
+Pridanie | do ATTRDEC' a Y, aby bola gramatika LL1
+
+ATTRDEC' -> NAME & ATTRDEC'' .
+
+DEFAULTDEC' -> WORD & Y' .
+
+   
+
+
+
