@@ -21,5 +21,9 @@ object ExampleInputs {
       |<!ELEMEENT body (#PCDATA)>
     """.stripMargin
 
-  val example5: String = "<!ELEMENT note ((to,from,heading,body))>"
+  val example5: String =
+    """
+      |<!ELEMENT note (((to,from,heading,body)))>
+    """.stripMargin
+
 }

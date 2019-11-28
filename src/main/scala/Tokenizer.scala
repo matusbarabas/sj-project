@@ -1,5 +1,7 @@
 object Tokenizer {
 
+  var levenshteinFlag = false
+
   def checkGeneric(word: String, tokenTypes: Seq[TokenType.Val], upperType: Option[TokenType.Val] = None): Seq[Token] = {
     tokenTypes
       .map(tokenType => (tokenType, tokenType.regex.findFirstIn(word)))
@@ -115,30 +117,32 @@ object Tokenizer {
   def run(string: String): Seq[Token] = {
     val tokens = tokenize(string)
 
-    var typoFound = false
-    println("Checking for typo in non reserved or unknown tokens:")
-    val fixedTokens = tokens.map { token =>
-      if ((Seq(TokenType.Unknown) ++ TokenType.nonReservedWords).contains(token.tokenType)) {
-        TokenType.reservedWords
-          .map { tokenType =>
-            val toCompare = tokenType.keyword.get
-            (tokenType, toCompare, levenshteinDistance(token.value, toCompare))
+    if (levenshteinFlag) {
+      var typoFound = false
+      println("Checking for typo in non reserved or unknown tokens:")
+      val fixedTokens = tokens.map { token =>
+        if ((Seq(TokenType.Unknown) ++ TokenType.nonReservedWords).contains(token.tokenType)) {
+          TokenType.reservedWords
+            .map { tokenType =>
+              val toCompare = tokenType.keyword.get
+              (tokenType, toCompare, levenshteinDistance(token.value, toCompare))
+            }
+            .find { case (_, _, distance) => distance <= 2 }
+          match {
+            case Some((tokenType, toCompare, distance)) =>
+              println(s"""Levenshtein distance of "${token.value}" from "$toCompare" is $distance, changing token type to $tokenType """)
+              typoFound = true
+              Token(toCompare, tokenType)
+            case _ => token
           }
-          .find { case (_, _, distance) => distance <= 2 }
-        match {
-          case Some((tokenType, toCompare, distance)) =>
-            println(s"""Levenshtein distance of "${token.value}" from "$toCompare" is $distance, changing token type to $tokenType """)
-            typoFound = true
-            Token(toCompare, tokenType)
-          case _ => token
-        }
-      } else token
-    }
-    if(!typoFound) {
-      println("no typos found")
-    }
-    println()
-    fixedTokens
+        } else token
+      }
+      if(!typoFound) {
+        println("no typos found")
+      }
+      println()
+      fixedTokens
+    } else tokens
   }
 
 }
