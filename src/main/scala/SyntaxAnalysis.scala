@@ -76,6 +76,7 @@ object SyntaxAnalysis {
   }
 
   def recovery(stack: Stack[String]): Unit = {
+    println("RECOVERY")
     if (stack.top == "ELEMCHILD′′") {
       stack.pop()
       stack.push("ELEMCHILD′′′")

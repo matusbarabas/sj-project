@@ -23,7 +23,7 @@ object ExampleInputs {
 
   val example5: String =
     """
-      |<!ELEMENT note (((to,from,heading,body)))>
+      |<!ELEMENT note ((to,from,heading,body))>
     """.stripMargin
 
 }
