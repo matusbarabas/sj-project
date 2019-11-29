@@ -74,13 +74,13 @@ object SyntaxAnalysis {
         if (rule == "error") {
           stepPrintln(Console.GREEN + "ERROR - No match in parsing table.")
           recovery(stack)
-        } else if (rule == "ε") {
+        } else if (rule == "epsilon") {
           println(Console.GREEN + "MATCH - Applying rules: " + stack.top + " -> " + rule + Console.RESET)
           stack.pop()
           stepPrintln("POP - Rule is epsilon.")
         } else {
           stepPrintln(Console.GREEN + "MATCH - Applying rules: " + stack.top + " -> " + rule + Console.RESET)
-          val rules = rule.split("\u00A0").toList
+          val rules = rule.split(" ").toList
           stack.pop()
           rules.reverse.foreach(stack.push)
         }
@@ -94,10 +94,10 @@ object SyntaxAnalysis {
 
   def recovery(stack: Stack[String]): Unit = {
     println("RECOVERY")
-    if (stack.top == "ELEMCHILD′′") {
+    if (stack.top == "ELEMCHILD''") {
       stack.pop()
-      stack.push("ELEMCHILD′′′")
-    } else if (stack.top == "ELEMCHILD′") {
+      stack.push("ELEMCHILD'''")
+    } else if (stack.top == "ELEMCHILD'") {
       stack.pop()
     } else {
       //sys.error("ERROR - No match in parsing table, end of execution.")
