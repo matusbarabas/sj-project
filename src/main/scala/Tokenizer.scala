@@ -1,6 +1,9 @@
 object Tokenizer {
 
   var levenshteinFlag = false
+  var stepsFlag = false
+
+  def stepPrintln: String => Unit = Utility.stepPrintln(stepsFlag)
 
   def checkGeneric(word: String, tokenTypes: Seq[TokenType.Val], upperType: Option[TokenType.Val] = None): Seq[Token] = {
     tokenTypes
@@ -92,7 +95,7 @@ object Tokenizer {
         )
       )
       tokens.foreach(token =>
-        println(s"""${" " * depth * 4}Created token "${token.value}" of type "${token.tokenType}"""")
+        stepPrintln(Console.GREEN + s"""${" " * depth * 4}Created token "${token.value}" of type "${token.tokenType}"""" + Console.RESET)
       )
       println()
       tokens
@@ -115,9 +118,16 @@ object Tokenizer {
   }
 
   def run(string: String): Seq[Token] = {
+    println("##################################################################")
+    println("#                                                                #")
+    println("#                        LEXICAL ANALYSIS                        #")
+    println("#                                                                #")
+    println("##################################################################")
+    println()
+
     val tokens = tokenize(string)
 
-    if (levenshteinFlag) {
+    val _tokens = if (levenshteinFlag) {
       var typoFound = false
       println("Checking for typo in non reserved or unknown tokens:")
       val fixedTokens = tokens.map { token =>
@@ -130,7 +140,7 @@ object Tokenizer {
             .find { case (_, _, distance) => distance <= 2 }
           match {
             case Some((tokenType, toCompare, distance)) =>
-              println(s"""Levenshtein distance of "${token.value}" from "$toCompare" is $distance, changing token type to $tokenType """)
+              stepPrintln(s"""Levenshtein distance of "${token.value}" from "$toCompare" is $distance, changing token type to $tokenType """)
               typoFound = true
               Token(toCompare, tokenType)
             case _ => token
@@ -138,11 +148,21 @@ object Tokenizer {
         } else token
       }
       if(!typoFound) {
-        println("no typos found")
+        stepPrintln("no typos found")
+      } else {
+        stepPrintln("no more typos found")
       }
       println()
       fixedTokens
     } else tokens
+
+
+    println("----- ----- ----- ----- ----- TOKENS ----- ----- ----- ----- -----")
+    _tokens.foreach(t =>
+      println(s"${t.value}${" " * (12 - t.value.length)} ${t.tokenType}")
+    )
+    stepPrintln("")
+    _tokens
   }
 
 }

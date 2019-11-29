@@ -3,8 +3,16 @@ import scala.collection.mutable.Stack
 
 object SyntaxAnalysis {
 
+  var recoveryFlag = false
+  var stepsFlag = false
+
+  def stepPrintln: String => Unit = Utility.stepPrintln(stepsFlag)
+
+  def success(): Unit = println("\nResult: The input is a valid basicDTD string.")
+  def failure(): Unit = println("\nResult: The input is not a valid basicDTD string.")
+
   def initializeAndLoadParseTable(): collection.mutable.Map[String, Map[String, String]] = {
-    val bufferedSource = Source.fromFile("parsing_tableCSV.csv")
+    val bufferedSource = Source.fromFile("parsing_tableCSV.csv")("UTF-8")
     val terminals = bufferedSource.getLines().next().drop(1).split("\t").toList
 
     val parsingTable = collection.mutable.Map.empty[String, Map[String, String]]
@@ -24,6 +32,13 @@ object SyntaxAnalysis {
     tokensIn: Seq[Token],
     parsingTable: collection.mutable.Map[String, Map[String, String]]
   ): Unit = {
+    println("##################################################################")
+    println("#                                                                #")
+    println("#                        SYNTAX ANALYSIS                         #")
+    println("#                                                                #")
+    println("##################################################################")
+    println()
+
     val tokens = tokensIn.flatMap { token =>
       if (token.tokenType == TokenType.NonReservedWord) {
         token.value.map(tokenChar => Token(tokenChar.toString, TokenType.NonReservedWordChar))
@@ -47,32 +62,34 @@ object SyntaxAnalysis {
 
       if (!parsingTable.keys.toList.contains(stack.top) | stack.top == "$") {
         if (token.value == stack.top) {
-          println("POP - The top of the stack is the same as token.")
+          stepPrintln(Console.GREEN + "POP - The top of the stack is the same as token." + Console.RESET)
           stack.pop()
           pos += 1
         } else {
-          println("ERROR - No match in parsing table.")
+          stepPrintln(Console.GREEN + "ERROR - No match in parsing table." + Console.RESET)
           recovery(stack)
         }
       } else {
         val rule = getRule(stack.top, token.value, parsingTable)
         if (rule == "error") {
-          println("ERROR - No match in parsing table.")
+          stepPrintln(Console.GREEN + "ERROR - No match in parsing table.")
           recovery(stack)
         } else if (rule == "ε") {
-          println("MATCH - Applying rules: " + stack.top + " -> " + rule)
+          println(Console.GREEN + "MATCH - Applying rules: " + stack.top + " -> " + rule + Console.RESET)
           stack.pop()
-          println("POP - Rule is epsilon.")
+          stepPrintln("POP - Rule is epsilon.")
         } else {
-          println("MATCH - Applying rules: " + stack.top + " -> " + rule)
+          stepPrintln(Console.GREEN + "MATCH - Applying rules: " + stack.top + " -> " + rule + Console.RESET)
           val rules = rule.split("\u00A0").toList
           stack.pop()
           rules.reverse.foreach(stack.push)
         }
       }
+      println()
     }
 
-    println("DONE")
+    println(Console.GREEN + "DONE" + Console.RESET)
+    success()
   }
 
   def recovery(stack: Stack[String]): Unit = {
@@ -83,7 +100,10 @@ object SyntaxAnalysis {
     } else if (stack.top == "ELEMCHILD′") {
       stack.pop()
     } else {
-      sys.error("ERROR - No match in parsing table, end of execution.")
+      //sys.error("ERROR - No match in parsing table, end of execution.")
+      println(Console.RED + "ERROR - No match in parsing table, end of execution." + Console.RESET)
+      failure()
+      System.exit(2)
     }
   }
 
@@ -94,7 +114,12 @@ object SyntaxAnalysis {
   ): String = {
     parsingTable.get(nonTerminal).flatMap(_.get(terminal)) match {
       case Some(rule) => rule
-      case _ => sys.error("Parsing table out of bounds.")
+      case _ =>
+        //sys.error("Parsing table out of bounds.")
+        println(Console.RED + "Parsing table out of bounds." + Console.RESET)
+        failure()
+        System.exit(2)
+        ""
     }
   }
 
@@ -103,8 +128,13 @@ object SyntaxAnalysis {
   }
 
   def printStack(stack: Stack[String]): Unit = {
-    println("----- ----- ----- ----- ----- STACK ----- ----- ----- ----- -----")
-    stack.foreach(println(_))
-    println("----- ----- ----- ----- ----- END STACK ----- ----- ----- ----- -")
+    val maxLen = stack.map(_.length).max
+    val dashes = ("----- " * math.ceil(maxLen / 10.0f).toInt).trim()
+    val width = dashes.length + " STACK ".length + dashes.length
+    val offset = (word: String, end: Int) => " " * (((width - 2 - word.length) / 2) + end * ((width - word.length) % 2))
+
+    println(s"$dashes STACK $dashes")
+    stack.foreach(word => println(s"|${offset(word, 0)}$word${offset(word, 1)}|"))
+    println(s"$dashes ----- $dashes")
   }
 }
