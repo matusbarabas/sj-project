@@ -1,1 +1,1 @@
-<!ELEMENT note ((to,from,heading,body))>
+<!ATTLIST att1 | att2 IDREF #REQUIRED>
