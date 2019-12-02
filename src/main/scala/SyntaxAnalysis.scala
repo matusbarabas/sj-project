@@ -8,8 +8,8 @@ object SyntaxAnalysis {
 
   def stepPrintln: String => Unit = Utility.stepPrintln(stepsFlag)
 
-  def success(): Unit = println("\nResult: The input is a valid basicDTD string.")
-  def failure(): Unit = println("\nResult: The input is not a valid basicDTD string.")
+  def success(): Unit = println(Console.GREEN + "\nResult: The input is a valid basicDTD string." + Console.RESET)
+  def failure(): Unit = println(Console.RED + "\nResult: The input is not a valid basicDTD string." + Console.RESET)
 
   def initializeAndLoadParseTable(): collection.mutable.Map[String, Map[String, String]] = {
     val bufferedSource = Source.fromFile("parsing_tableCSV.csv")("UTF-8")
@@ -93,18 +93,27 @@ object SyntaxAnalysis {
   }
 
   def recovery(stack: Stack[String]): Unit = {
-    println("RECOVERY")
-    if (stack.top == "ELEMCHILD''") {
-      stack.pop()
-      stack.push("ELEMCHILD'''")
-    } else if (stack.top == "ELEMCHILD'") {
-      stack.pop()
-    } else {
-      //sys.error("ERROR - No match in parsing table, end of execution.")
+    def exitOnError(): Unit = {
       println(Console.RED + "ERROR - No match in parsing table, end of execution." + Console.RESET)
       failure()
       System.exit(2)
     }
+
+    if (recoveryFlag) {
+      println("RECOVERY")
+      if (stack.top == "ELEMCHILD''") {
+        stack.pop()
+        stack.push("ELEMCHILD'''")
+      } else if (stack.top == "ELEMCHILD'") {
+        stack.pop()
+      } else {
+        exitOnError()
+      }
+    } else {
+      exitOnError()
+    }
+
+
   }
 
   def getRule(
