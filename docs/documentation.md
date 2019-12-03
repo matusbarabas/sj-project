@@ -374,7 +374,7 @@ Implementovali sme zotavenie z chýb aj pre lexikálny aj syntaktický analyzát
 
 Lexikálny analyzátor sa dokáže zotaviť z jednoduchých preklepov vo vyhradených slovách, ako napríklad "<ELEMENT". Zisťuje sa tu Levenshteinova vzdialenosť, ak je menšia alebo rovná dva, tak považujeme dané slovo za preklep.
 
-Syntaktický analyzátor sa dokáže zotaviť z nesprávneho počtu zátvoriek.
+Syntaktický analyzátor sa dokáže zotaviť zo situácie, kedy používateľ zabudne napísať zátvorku (napr. <!ELEMENT note (to,from,heading,body))>). Analyzátor pri zotavení buď vyhodí symbol na vrchu zásobníka alebo vyhodí vrchol a pridá stav. Deje sa tak na základe toho, či chýba pravá alebo ľavá zátvorka.
 
 ## Použitie
 ```
