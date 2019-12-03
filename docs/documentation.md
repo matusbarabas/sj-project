@@ -352,13 +352,13 @@ No First-First conflicts exist.
 ```
 Nullable: {DTDOC', SEQ''', CP', ATTRDEC'', DEFAULTDEC'', NAME', WORD'}
 
-F1(DTDOC') ∩ FO1(DTDOC') = {<!ATTLIST, <!ELEMENT, ε} ∩ {$} = {}
-F1(SEQ''') ∩ FO1(SEQ''') = {',', ε} ∩ {)} = {}
-F1(CP') ∩ FO1(CP') = {?, *, +, ε} ∩ {), ',', |} = {}
-F1(ATTRDEC'') ∩ FO1(ATTRDEC'') = {_, :, a-z, A-Z, ε} ∩ {>} = {}
-F1(DEFAULTDEC'') ∩ FO1(DEFAULTDEC'') = {a-z, A-Z, 0-9, @, ~, %, ε} ∩ {"} = {}
-F1(NAME') ∩ FO1(NAME') = {., -, _, :, a-z, A-Z, 0-9, ε} ∩ {EMPTY, ANY, (#PCDATA), (, ?, *, +, ), ',', |, CDATA, NMTOKEN, IDREF} = {}
-F1(WORD') ∩ FO1(WORD') = {a-z, A-Z, 0-9, @, ~, %, ε} ∩  {), |} = {}
+F1(DTDOC') ∩ FO1(DTDOC') = {<!ATTLIST, <!ELEMENT, ε} ∩ {$} = ∅
+F1(SEQ''') ∩ FO1(SEQ''') = {',', ε} ∩ {)} = ∅
+F1(CP') ∩ FO1(CP') = {?, *, +, ε} ∩ {), ',', |} = ∅
+F1(ATTRDEC'') ∩ FO1(ATTRDEC'') = {_, :, a-z, A-Z, ε} ∩ {>} = ∅
+F1(DEFAULTDEC'') ∩ FO1(DEFAULTDEC'') = {a-z, A-Z, 0-9, @, ~, %, ε} ∩ {"} = ∅
+F1(NAME') ∩ FO1(NAME') = {., -, _, :, a-z, A-Z, 0-9, ε} ∩ {EMPTY, ANY, (#PCDATA), (, ?, *, +, ), ',', |, CDATA, NMTOKEN, IDREF} = ∅
+F1(WORD') ∩ FO1(WORD') = {a-z, A-Z, 0-9, @, ~, %, ε} ∩  {), |} = ∅
 
 No First-Follow conflicts exist.
 ```
