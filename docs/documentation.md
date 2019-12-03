@@ -348,7 +348,7 @@ F1(LET) ∩ F1(DIG) ∩ F1(@) ∩ F1(~) ∩ F1(%) = {a-z, A-Z} ∩ {0-9} ∩ {@}
 No First-First conflicts exist.
 ```
 
-#### First-Follow konflikty
+### First-Follow konflikty
 ```
 Nullable: {DTDOC', SEQ''', CP', ATTRDEC'', DEFAULTDEC'', NAME', WORD'}
 
