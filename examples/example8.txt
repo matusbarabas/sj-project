@@ -1,0 +1,6 @@
+<!ELEMENT : ANY>
+<!ELEMENT _ ANY>
+<!ELEMENT x ANY>
+<!ATTLIST : |>
+<!ATTLIST _ |>
+<!ATTLIST x |>

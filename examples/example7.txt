@@ -1,0 +1,1 @@
+<!ATTLIST santa:clause- | s.t.r.o.m.c.e.k (ab|cd) #FIXED "@%|~0">
