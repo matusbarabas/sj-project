@@ -1,6 +1,9 @@
 # SimpleDTD
 
+```
 Autori: Matúš Barabás, David Tran Duc
+Podiel práce: 50%/50%
+```
 
 ## BNF
 ```
@@ -55,6 +58,23 @@ digit::= '0' | .. | '9' .
 word ::= char {char} .
 char::= letter | digit | $ | % | ~
 ```
+
+## Príklady viet z jazyka
+```
+<!ELEMENT note ((to,from,heading,body))>
+<!ELEMENT to (#PCDATA)>
+<!ELEMENT from (#PCDATA)>
+<!ELEMENT heading (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+```
+```
+<!ATTLIST sipvs | FiiT IDREF #REQUIRED>
+```
+```
+<!ELEMENT :w.i-n.t-e.r.._..i-s.._..h.e-r.e: (((or* | not*)?))>
+```
+
+Ďalšie testovacie vstupy a ich očakávané výstupy sú v kapitole nižšie.
 
 ## Prepis pravidiel z BNF do pravidiel bezkontextovej gramatiky
 ```
@@ -328,9 +348,159 @@ F1(LET) ∩ F1(DIG) ∩ F1(@) ∩ F1(~) ∩ F1(%) = {a-z, A-Z} ∩ {0-9} ∩ {@}
 No First-First conflicts exist.
 ```
 
-### LL(1)
-Neexistujú FIRST-FIRST ani FIRST-FOLLOW konflikty, gramatika je LL(1)
+#### First-Follow konflikty
+```
+Nullable: {DTDOC', SEQ''', CP', ATTRDEC'', DEFAULTDEC'', NAME', WORD'}
+
+F1(DTDOC') ∩ FO1(DTDOC') = {<!ATTLIST, <!ELEMENT, ε} ∩ {$} = {}
+F1(SEQ''') ∩ FO1(SEQ''') = {',', ε} ∩ {)} = {}
+F1(CP') ∩ FO1(CP') = {?, *, +, ε} ∩ {), ',', |} = {}
+F1(ATTRDEC'') ∩ FO1(ATTRDEC'') = {_, :, a-z, A-Z, ε} ∩ {>} = {}
+F1(DEFAULTDEC'') ∩ FO1(DEFAULTDEC'') = {a-z, A-Z, 0-9, @, ~, %, ε} ∩ {"} = {}
+F1(NAME') ∩ FO1(NAME') = {., -, _, :, a-z, A-Z, 0-9, ε} ∩ {EMPTY, ANY, (#PCDATA), (, ?, *, +, ), ',', |, CDATA, NMTOKEN, IDREF} = {}
+F1(WORD') ∩ FO1(WORD') = {a-z, A-Z, 0-9, @, ~, %, ε} ∩  {), |} = {}
+
+No First-Follow conflicts exist.
+```
 
 ## Parsing table
 
 Tabuľka je v externom súbore "parsing_table.html" alebo "parsing_table.csv"
+
+
+# Program
+
+Implementovali sme zotavenie z chýb aj pre lexikálny aj syntaktický analyzátor. Toto zotavovanie z chýb je možné zapnúť pomocou príznakov. Taktiež je možné zapnúť krokovanie programu.
+
+Lexikálny analyzátor sa dokáže zotaviť z jednoduchých preklepov vo vyhradených slovách, ako napríklad "<ELEMENT". Zisťuje sa tu Levenshteinova vzdialenosť, ak je menšia alebo rovná dva, tak považujeme dané slovo za preklep.
+
+Syntaktický analyzátor sa dokáže zotaviť z nesprávneho počtu zátvoriek.
+
+## Použitie
+```
+basicDTD, usage:
+  -h            shows this help
+  -p [path]     path to the input file, if unspecified, takes in input.txt
+  -l            enables automatic fixing of typos of reserved keyword, based on Levenshtein distance
+  -r            enables recovery from incorrect usage of round brackets
+  -L            enables step by step execution of lexical analyzer
+  -S            enables step by step execution of syntax analyzer
+```
+
+## Testovacie vstupy a výstupy
+
+### Examples
+
+Example 1:
+```
+<!ELEMENT note ((to,from,heading,body))>
+<!ELEMENT to (#PCDATA)>
+<!ELEMENT from (#PCDATA)>
+<!ELEMENT heading (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+```
+should be
+```
+green regardless of flags
+```
+
+Example 2:
+```
+<!ELEMENT note ((to,from,heading,body))>
+<!EEMENT to (#PCDATA)>
+<!ELEEMNT from (#PCDATA)>
+<!ELEMENTE heading (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+```
+should be
+```
+green with    flag -l
+red   without flag -l : Parsing table out of bounds.
+```
+
+Example 3:
+```
+<!ELEMENT note (to,from,heading,body))>
+<!ELEMENT note ((to,from,heading,body)>
+<!ELEMENT note (((to,from,heading,body))>
+```
+should be
+```
+green with    flag -s
+red   without flag -s : No match in parsing table.
+```
+
+Example 4:
+```
+<!ELEMENT note (to,from,heading,body)*)>
+<!EEMENT to (#PCDATA)>
+<!ELEEMNT from (#PCDATA)>
+<!ELEMENTE heading (#PCDATA)>
+<!ELEMENT body (#PCDATA)>
+```
+should be
+```
+green with    flag -ls
+red   with    flag -s  : Parsing table out of bounds.
+      with    flag -l  : No match in parsing table.
+      without flags    : No match in parsing table.
+```
+
+Example 5:
+```
+<!ATTLIST sipvs | FiiT IDREF #REQUIRED>
+```
+should be
+```
+green regardless of flags
+```
+
+Example 6:
+```
+<!ELEMENT :w.i-n.t-e.r.._..i-s.._..h.e-r.e: (((or* | not*)?))>
+```
+should be
+```
+green regardless of flags
+```
+
+Example 7:
+```
+<!ATTLIST santa:clause- | s.t.r.o.m.c.e.k (ab|cd) #FIXED "@%|~0|">
+```
+should be
+```
+green regardless of flags
+```
+
+Example 8:
+```
+<!ELEMENT : ANY>
+<!ELEMENT _ ANY>
+<!ELEMENT x ANY>
+<!ATTLIST : |>
+<!ATTLIST _ |>
+<!ATTLIST x |>
+```
+should be
+```
+green regardless of flags
+```
+
+Example 9:
+```
+<!ELEMENT cHrIsTmAs ((:santa007+ | ((fiit,no:more))*)?)>
+```
+should be
+```
+green regardless of flags
+```
+
+Example 10:
+```
+<!ATTLIST _ | : (svk | cz) "sweden|finland|">
+```
+should be
+```
+green regardless of flags
+```
