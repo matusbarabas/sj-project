@@ -1,6 +1,7 @@
 # SimpleDTD
 
 Autori: Matúš Barabás, David Tran Duc
+
 Podiel práce: 50%/50%
 
 ## BNF
