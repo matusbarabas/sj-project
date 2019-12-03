@@ -1,1 +1,1 @@
-<!ATTLIST att1 | att2 IDREF #REQUIRED>
+<!ATTLIST sipvs | FiiT IDREF #REQUIRED>

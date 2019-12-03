@@ -29,3 +29,28 @@ example5 should be
 ```
 green regardless of flags
 ```
+
+example6 should be
+```
+green regardless of flags
+```
+
+example7 should be
+```
+green regardless of flags
+```
+
+example8 should be
+```
+green regardless of flags
+```
+
+example9 should be
+```
+green regardless of flags
+```
+
+example10 should be
+```
+green regardless of flags
+```

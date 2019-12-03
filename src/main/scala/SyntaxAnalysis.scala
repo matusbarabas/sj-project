@@ -121,8 +121,13 @@ object SyntaxAnalysis {
     terminal: String,
     parsingTable: collection.mutable.Map[String, Map[String, String]]
   ): String = {
-    parsingTable.get(nonTerminal).flatMap(_.get(terminal)) match {
-      case Some(rule) => rule
+    var terminalToTable = terminal
+    if (terminal == "\"") {
+      terminalToTable = "quotas"
+    }
+
+    parsingTable.get(nonTerminal).flatMap(_.get(terminalToTable)) match {
+      case Some(rule) => rule.replaceAll("quotas", "\"")
       case _ =>
         //sys.error("Parsing table out of bounds.")
         println(Console.RED + "Parsing table out of bounds." + Console.RESET)

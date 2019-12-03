@@ -31,7 +31,7 @@ object TokenType extends Enumeration {
   val FixedToken = Val("""(#FIXED)""", Some("#FIXED"))
 
   val Word = Val("""^[A-Za-z0-9\$\~\%]*$""")
-  val Name = Val("""^([A-Za-z\_\:])[A-Za-z0-9\-\_\:]*$""")
+  val Name = Val("""^([A-Za-z\_\:])[A-Za-z0-9\.\-\_\:]*$""")
   val NonReservedWord = Val("") // Represents both Word and Name
   val NonReservedWordChar = Val("")
 
