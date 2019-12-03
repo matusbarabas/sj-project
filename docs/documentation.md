@@ -35,7 +35,7 @@ attrdecl ::= '<!ATTLIST' name {'|' name attrtype defaultdecl} '>' .
 defaultdecl ::= '#REQUIRED' | '#IMPLIED' | (['#FIXED'] '"' word { '|' word} '"' ) .
 ```
 
-## BNF po úpgrave
+## BNF po úprave
 ```
 dtddocument ::= declaration {declaration} .
 declaration ::= attrdecl | elemdecl .
@@ -299,6 +299,33 @@ FO1(DIG) = FO1(NAMECHAR) U FO1(CHAR) = {., -, _, :, a-z, A-Z, 0-9, EMPTY, ANY, (
 FO1(WORD) = F1(ATTRTYPE') U {), |} U FO1(WORD') = {), |}
 FO1(WORD') = FO1(WORD) = {), |}
 FO1(CHAR) = F1(WORD')\ {ε} U FO1(WORD) = {a-z, A-Z, 0-9, @, ~, %, ), |}
+```
+
+### First-First konflikty
+```
+F1(DTDOC) ∩ {ε} = {<!ATTLIST, <!ELEMENT} ∩ {ε} = ∅
+F1(ATTRDEC) ∩ F1(ELEMDEC) = {<!ATTLIST} ∩ {<!ELEMENT} = ∅ 
+F1(EMPTY >) ∩ F1(ANY >) ∩ F1((#PCDATA) >) ∩ F1(ELEMCHILD >) = {EMPTY} ∩ {ANY} ∩ {(#PCDATA)} ∩ {(} = ∅
+F1(? )) ∩ F1(* )) F1(+ )) F1()) = {?} ∩ {*} ∩ {+} ∩ {)} = ∅
+F1('|' CP ) ELEMCHILD') ∩ F1(SEQ'' ) ELEMCHILD') ∩ F1() ELEMCHILD') = {|} ∩ {','} ∩ {)} = ∅
+F1(SEQ'') ∩ {ε} = {','} ∩ {ε} = ∅
+F1(NAME CP') ∩ F1(( CP'') = F1(NAME) ∩ {(} = {_, :, a-z, A-Z} ∩ {(} =  ∅
+F1(?) ∩ F1(*) ∩ F1(+) ∩ {ε} = {?} ∩ {*} ∩ {+} ∩ {ε} = ∅
+F1('|' CP ) CP') ∩ F1(SEQ'' ) CP') ∩ F1() CP') = {|} ∩ {','} ∩ {)} = ∅
+F1(NAME ATTRTYPE DEFAULTDEC ATTRDEC'') ∩ {ε} = F1(NAME) ∩ {ε} = {_, :, a-z, A-Z}  ∩ {ε} =  ∅
+F1(CDATA) ∩ F1(NMTOKEN) ∩ F1(IDREF) ∩ F1(( WORD ATTRTYPE') = {CDATA} ∩ {NMTOKEN} ∩ {IDREF} ∩ {(} = ∅
+F1()) ∩ F1('|' WORD )) = {)} ∩ {|} = ∅
+F1(#REQUIRED) ∩ F1(#IMPLIED) ∩ F1(#FIXED " DEFAULTDEC' ") ∩ F1(" DEFAULTDEC' ") = {#REQUIRED} ∩ {#IMPLIED} ∩ {#FIXED} ∩ {"}  = ∅
+F1(DEFAULTDEC') ∩ {ε} = {a-z, A-Z, 0-9, @, ~, %} ∩ {ε} = ∅
+F1(LET NAME') ∩ F1(_ NAME') ∩ F1(: NAME') = F1(LET) ∩ {_} ∩ {:} = {a-z, A-Z} ∩ {_} ∩ {:} = ∅
+F1(NAMECHAR NAME') ∩ {ε} = F1(NAMECHAR) {ε} = {., -, _, :, a-z, A-Z, 0-9} ∩ {ε} = ∅
+F1(LET) ∩ F1(DIG) ∩ F1(.) ∩ F1(-) ∩ F1(_) ∩ F1(:) = {a-z, A-Z} ∩ {0-9} ∩ {.} ∩ {-} ∩ {_} ∩ {:} = ∅
+F1(a) ∩ F1(b) ... F1(Z) = {a} ∩ {b} ... ∩ {Z} = ∅
+F1(0) ∩ F1(1) ... F1(9) = {0} ∩ {1} ... ∩ {9} = ∅
+F1(WORD) ∩ {ε} = {a-z, A-Z, 0-9, @, ~, %} ∩ {ε} = ∅
+F1(LET) ∩ F1(DIG) ∩ F1(@) ∩ F1(~) ∩ F1(%) = {a-z, A-Z} ∩ {0-9} ∩ {@} ∩ {~} ∩ {%} = ∅
+
+No First-First conflicts exist.
 ```
 
 ### LL(1)
